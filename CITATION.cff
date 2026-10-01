@@ -1,0 +1,17 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "computational-em-rf-lab: FDTD electromagnetic verification and periodic-structure resonance study"
+type: software
+version: 0.1.0
+date-released: 2026-09-30
+license: MIT
+authors:
+  - family-names: Curtis
+    given-names: Aaron
+repository-code: "https://github.com/OWNER/computational-em-rf-lab"
+keywords:
+  - FDTD
+  - MEEP
+  - Mie scattering
+  - frequency selective surface
+  - computational electromagnetics

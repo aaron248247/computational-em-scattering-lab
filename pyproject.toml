@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "em-rf-lab"
+version = "0.1.0"
+description = "Validated FDTD (MEEP) electromagnetic scattering against exact Mie theory: a computational EM / RF modeling lab."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "Aaron Curtis" }]
+dependencies = [
+  "numpy>=2.0",
+  "scipy>=1.11",
+  "matplotlib>=3.7",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=7"]
+# NOTE: MEEP (pymeep) is not pip-installable; install it with conda-forge (see README).
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra -m 'not slow'"
+markers = [
+  "meep: requires a working MEEP/pymeep installation (auto-skipped otherwise)",
+  "slow: expensive FDTD runs (tens of seconds to minutes); run with `pytest -m slow`",
+  "results: validates committed result files from the experiments (skipped if absent)",
+]
