@@ -1,0 +1,1 @@
+Coarse survey (551 frequencies) of normal-incidence reflectance of a cylinder array (R=1, eps_r=4) versus pitch. White ticks mark the first Rayleigh-Wood anomaly f=c/Λ. Under-sampled/unconverged high-Q lines at short TM pitch are re-examined in the finer studies.

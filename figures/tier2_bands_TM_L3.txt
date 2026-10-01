@@ -1,0 +1,1 @@
+Exploratory: reflectance map versus Bloch wavenumber and Harminv ringdown modes for the TM array at pitch 3. Below the light line (f < ky/2π) no propagating plane wave exists, so R is masked. At fixed ky the incidence angle varies with frequency. Harminv returns some duplicated or spurious modes; only modes with fit error <1e-3 and 5<Q<2000 are plotted.

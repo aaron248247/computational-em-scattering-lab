@@ -1,0 +1,23 @@
+{
+  "courant": 0.5,
+  "decay_tol": 1e-09,
+  "eps_r": 4.0,
+  "extra": {},
+  "f_max": 0.9,
+  "f_min": 0.3,
+  "ky": 0.0,
+  "margin": 6.0,
+  "max_run_time": 3000.0,
+  "min_run_time": 20.0,
+  "monitor_gap": 3.0,
+  "n_freq": 61,
+  "name": "slab_TM_normal_res30",
+  "pitch": 1.0,
+  "pml": 4.0,
+  "polarization": "TM",
+  "radius": 1.0,
+  "resolution": 30,
+  "source_fwidth_factor": 1.3,
+  "structure": "slab",
+  "thickness": 1.0
+}

@@ -1,0 +1,23 @@
+{
+  "courant": 0.5,
+  "decay_tol": 1e-08,
+  "eps_r": 4.0,
+  "extra": {},
+  "f_max": 0.27382107302861264,
+  "f_min": 0.2710964852372832,
+  "ky": 0.0,
+  "margin": 6.0,
+  "max_run_time": 8000.0,
+  "min_run_time": 20.0,
+  "monitor_gap": 3.0,
+  "n_freq": 161,
+  "name": "hq_TM_L2.4_RT",
+  "pitch": 2.4,
+  "pml": 4.0,
+  "polarization": "TM",
+  "radius": 1.0,
+  "resolution": 40.0,
+  "source_fwidth_factor": 1.3,
+  "structure": "cylinder",
+  "thickness": 2.0
+}

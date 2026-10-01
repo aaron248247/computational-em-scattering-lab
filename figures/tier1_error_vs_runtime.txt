@@ -1,0 +1,1 @@
+Error versus wall-clock cost of one full reference+scattering configuration (41 frequencies, 91 angles, serial).

@@ -1,0 +1,1 @@
+Verification of the periodic-cell reflectance/transmittance workflow against the exact slab (Airy) solution: spectra (left), second-order grid convergence (centre, fitted order 2.03) and oblique-incidence residuals (right).

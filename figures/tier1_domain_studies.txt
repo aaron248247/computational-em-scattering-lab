@@ -1,0 +1,1 @@
+One-factor-at-a-time sensitivity at fixed resolution: how much the far-field result changes when each numerical parameter is varied around the production setting.

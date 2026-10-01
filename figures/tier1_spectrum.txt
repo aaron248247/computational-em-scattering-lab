@@ -1,0 +1,1 @@
+Total scattering width spectrum from two independent FDTD estimators (near-to-far integral and scattered-flux) against the exact series; lower panel: signed relative error.

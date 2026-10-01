@@ -1,0 +1,1 @@
+Complex near field at ka=3 (TM, eps_r=4, res 40); FDTD DFT field normalised by the incident amplitude vs the exact interior/exterior series. Relative L2 difference over the patch: 1.339e-02.

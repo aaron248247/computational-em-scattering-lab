@@ -1,0 +1,1 @@
+Computational domain. The source line, closed near-to-far/flux box and PML are shown to scale; the dashed rectangle is the PML-free region.

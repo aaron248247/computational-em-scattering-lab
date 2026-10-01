@@ -1,0 +1,1 @@
+Sensitivity of f0 and Q to grid resolution (20-60), structure-PML margin, PML thickness and monitor gap, for a TM (pitch 3) and a TE (pitch 4) resonance.

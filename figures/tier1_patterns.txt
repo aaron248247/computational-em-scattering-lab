@@ -1,0 +1,1 @@
+Far-field echo width W(phi)=2*pi*rho*|F_s|^2/|F_i|^2 from the FDTD near-to-far transform against the exact Mie series, TM polarisation, eps_r=4.
