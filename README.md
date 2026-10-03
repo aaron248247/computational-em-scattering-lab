@@ -1,91 +1,101 @@
-# computational-em-rf-lab
+# computational-em-scattering-lab
 
-A small, verified computational-electromagnetics workflow built on the [MEEP](https://meep.readthedocs.io) FDTD solver:
-a **graduate-level parametric study of the resonances of a periodic dielectric-cylinder array** (a one-dimensional
-frequency-selective surface / metasurface), built on a **verification benchmark** in which the same FDTD workflow
-reproduces the exact Mie solution for a single cylinder. Everything is generic, public and unclassified: canonical
-dielectric cylinders in a dimensionless unit system (cylinder radius = 1, speed of light = 1).
+This repository contains a small computational-electromagnetics study built with the
+[MEEP](https://meep.readthedocs.io) FDTD solver. The main calculation is a parameter
+study of resonances in a one-dimensional periodic array of dielectric cylinders. The
+same numerical workflow is first checked against the exact Mie-series solution for a
+single dielectric cylinder. The geometry is deliberately simple: lossless dielectric cylinders with $\varepsilon_r=4$ in dimensionless units, with cylinder radius $R=1$ and $c=1$.
 
-| Part | Status |
-|---|---|
-| Primary investigation: resonances of a periodic cylinder array vs. pitch and polarisation | **COMPLETE** (core result); band-structure/ky scan **IN PROGRESS** (exploratory) |
-| Verification benchmark: FDTD vs. exact Mie scattering of a dielectric cylinder | **COMPLETE** |
-| Exact-slab verification of the periodic-cell workflow | **COMPLETE** |
-| Radar signal-processing chain (I/Q, matched filtering, Doppler, CFAR, beamforming) | **PLANNED** — nothing of this exists in the code |
-| Independent RCWA cross-check, 2-D lattices, inverse design | **PLANNED** |
+## Periodic dielectric-cylinder array
 
-## 1. Primary research investigation: collective resonances of a dielectric-cylinder array
+For an infinite row of cylinders with pitch $\Lambda$, the main quantities of interest
+are the frequency $f_0$, quality factor $Q$, and the fractional bandwidth over which the
+reflectance is at least 90%. Both TM ($E_z$) and TE ($H_z$) polarization are considered.
 
-**Question.** For an infinite row of lossless dielectric cylinders ($\varepsilon_r=4$, radius 1) with pitch $\Lambda$,
-illuminated at normal incidence, how do the frequency $f_0$, quality factor $Q$ and usable (≥ 90 % reflection)
-bandwidth of the lowest strong reflection resonance depend on $\Lambda$ and polarisation (TM $E_z$ / TE $H_z$)?
-Is the response consistent with the physics (energy conservation, diffraction-order onset, coupled-mode
-line shapes), and how well converged is it?
+The periodic calculation uses a single Bloch-periodic unit cell with plane-wave
+incidence. Reflectance and transmittance are obtained from Poynting-flux monitors and normalized to an empty-cell reference calculation. Resonances are characterized with line-shape fits and, where useful, with a separate time-domain Harminv ringdown estimate of $f_0$ and $Q$.
 
-**Method.** One Bloch-periodic unit cell, plane-wave incidence, reflectance and transmittance from Poynting-flux
-monitors normalised to an empty-cell run, line-shape fits with coupled-mode theory, and an independent
-time-domain (Harminv) ringdown estimate of $f_0$ and $Q$. Theory: [`docs/periodic_structures.md`](docs/periodic_structures.md).
-
-**Results** (details and exact numbers: [`docs/results.md`](docs/results.md)).
+More background is in
+[`docs/04_periodic_structures.md`](docs/04_periodic_structures.md), and the numerical results
+are collected in [`docs/05_results.md`](docs/05_results.md).
 
 ![lowest resonance vs pitch](figures/tier2_lowest_resonance.png)
 
-* **TE** ($H_z$): a broad, **fully reflecting** band ($R\to1.000$, lossless) whose frequency falls from $f_0=0.285$ to
-  $0.178$ as $\Lambda$ goes from 2.2 to 5. $Q$ is low ($\approx6$ – $28$) and the fractional ≥ 90 % reflection band has a
-  maximum of ≈ 6 % near $\Lambda\approx2.8$.
-* **TM** ($E_z$): $Q$ is strongly non-monotonic. The lowest TM resonance forms a smooth branch in $f_0$, but $Q$ rises
-  from ≈ 4 at $\Lambda=5$ to ≈ 65 at $\Lambda=3$, then to **~10³** around $\Lambda=2.4$ – $2.6$ and falls again to ≈ 180 at
-  $\Lambda=2.8$ — the signature of a mode that nearly decouples from the radiation continuum. We have *not* proven this is
-  a bound state in the continuum; the $Q$ values at $\Lambda=2.4$/$2.6$ are approximate (the ringdown is only marginally
-  converged).
-* **Convergence.** $f_0$ is stable to $\le5\times10^{-4}$ relative and $Q$ to 0.2 % across grid resolution 20–60, PML
-  thickness, structure-to-PML margin and monitor gap (two representative cases, `docs/verification_validation.md`).
-  Line-shape and ringdown estimates of $Q$ agree to 7 % where both exist (TM, $\Lambda=3$: 65.0 vs 62.7).
+The TE branch is comparatively broad. Over the pitch range studied, the lowest strong
+reflection resonance moves from about $f_0=0.285$ at $\Lambda=2.2$ to $f_0=0.178$ at
+$\Lambda=5$. The corresponding $Q$ values are roughly 6--28, and the fractional
+bandwidth with $R\ge0.9$ reaches about 6% near $\Lambda\approx2.8$.
+
+The TM branch behaves differently. Its resonance frequency changes smoothly with pitch,
+but its $Q$ is strongly non-monotonic: it is about 4 at $\Lambda=5$, about 65 at
+$\Lambda=3$, and rises to order $10^3$ near $\Lambda=2.4$--$2.6$ before falling again.
+This is consistent with a mode that becomes weakly coupled to the radiation continuum,
+but the present calculations do not establish a bound state in the continuum. The
+highest-$Q$ values at $\Lambda=2.4$ and $2.6$ come from long ringdown calculations and
+are only marginally converged.
+
+For two representative resonances, the fitted resonance frequency is stable to about
+$5\times10^{-4}$ relative over the resolution and domain-parameter checks. The TM
+$\Lambda=3$ case also provides a useful cross-check on $Q$: the fine line-shape fit gives
+$Q\approx65.0$, while the Harminv ringdown estimate gives $Q\approx62.7$.
 
 ![pitch maps](figures/tier2_pitch_maps.png)
 
-**Limitations.** 2-D geometry, lossless non-dispersive dielectric, an infinite row (no edges); $Q\lesssim10$ values are
-indicative because broad Fano-like lines are not described by a single Lorentzian; no second independent solver
-(RCWA planned); the coarse survey in the pitch map under-samples the narrowest TM lines and some short-pitch TM runs
-did not decay (flagged in `docs/results.md`).
+The periodic-array model is still limited to two dimensions, lossless nondispersive
+materials, and an infinite row with no edge effects. Broad low-$Q$ Fano-like lines are
+not always well represented by a single Lorentzian fit. The coarse pitch survey also
+undersamples the narrowest TM resonances, which is why the short-pitch cases were
+rechecked with finer frequency windows and longer ringdown runs. An independent RCWA
+calculation has not yet been added.
 
-## 2. Verification benchmark: FDTD scattering from a dielectric cylinder vs. exact Mie theory
+## Single-cylinder verification
 
-Before using the workflow on a periodic structure, it was verified on the one geometry with an exact solution. A TM
-plane wave (quasi-plane wave from a Gaussian-tapered line source) scatters from a cylinder ($ka\in[2,6]$); the
-far-field **echo width** $W(\phi)$ (a 2-D quantity; deliberately *not* called an "RCS") is obtained by near-to-far
-transformation of the scattered field and compared with the exact series in `src/em_rf_lab/analytical.py`.
+Before using the FDTD workflow for the periodic array, I checked it against the exact
+solution for scattering from a single dielectric cylinder.
+
+A TM quasi-plane wave from a Gaussian-tapered line source illuminates a cylinder over
+$ka\in[2,6]$. The far-field echo width
+
+$$
+W(\phi)
+$$
+
+is obtained from MEEP's near-to-far transformation and compared with the exact Mie
+series implemented in `src/em_rf_lab/analytical.py`. I use "echo width" rather than RCS because this is a two-dimensional scattering problem.
 
 ![patterns](figures/tier1_patterns.png)
 
-| Resolution (px/unit) | 10 | 15 | 20 | 30 | 40 | 60 |
-|---|---|---|---|---|---|---|
+| Resolution (px/unit)                  | 10    | 15    | 20    | 30    | 40    | 60    |
+| ------------------------------------- | ----- | ----- | ----- | ----- | ----- | ----- |
 | RMS relative $L^2$ error of $W(\phi)$ | 0.397 | 0.173 | 0.099 | 0.049 | 0.030 | 0.015 |
 
-* Error decreases monotonically; fitted order 1.74. A rigid frequency shift from the Yee scheme's numerical
-  dispersion explains most of it and converges with order 1.89.
-* A first set of runs stalled at ≈ 1.4 % error; this was traced (run-time study) to **duration**, not discretisation —
-  whispering-gallery modes near the rim ring long and are invisible to a centre probe. Both result sets are kept.
-* PML thickness, beam waist, near-to-far box and source bandwidth are held to ≤ 0.5 % in the production setting.
-* Half-domain mirror symmetry reproduces the full domain to $10^{-13}$.
-* Worst-case error at resolution 60 is 6.1 % at the narrowest resonance ($ka\approx5.4$).
+The error decreases monotonically with grid refinement. A fit over the finer grids gives
+an observed convergence order of about 1.74. The fitted rigid spectral shift converges
+with order about 1.89, close to the second-order behavior expected from numerical
+dispersion in the Yee scheme.
+
+The first version of the benchmark appeared to plateau near 1.4% error at high
+resolution. That turned out to be a run-duration problem rather than a grid-resolution
+problem: long-lived rim-localized modes were not being captured by the original decay
+criterion. Moving the decay probe toward the cylinder rim and extending the minimum run time removed the plateau.
+
+Separate checks were made for PML thickness, source waist, near-to-far-box placement, source bandwidth, and run duration. Half-domain mirror symmetry reproduces the full domain to numerical precision. At resolution 60, the largest single-frequency discrepancy is about 6.1% near the narrow resonance around $ka\approx5.4$.
 
 ![convergence](figures/tier1_convergence.png)
+
 ![field map](figures/tier1_field_map.png)
 
-## For technical reviewers
+## Reproducibility
 
-* The **question, physics, method, verification and limitations** of each part are in `docs/` (read
-  `docs/verification_validation.md` first).
-* Every figure is regenerated from stored results by `scripts/make_tier{1,2}_figures.py`; no figure is hand-made.
-* Each run is stored under `results/` with `config.json`, `meta.json` (git commit, library versions, wall time,
-  termination status) and `arrays.npz`; the directory name contains a hash of the full configuration.
-* Disagreements and limitations are reported rather than tuned away: the duration artefact above, the
-  under-resolved TM lines, near-grazing-incidence energy residuals in the slab check.
-* The code is organised so the analytical reference (`analytical.py`), numerical workflow (`simulation.py`,
-  `periodic.py`) and comparison (`validation.py`) are independent modules.
+The plotting scripts read saved result files; they do not rerun the simulations. Runs
+are stored under `results/` with the configuration, metadata, and numerical arrays needed to reproduce the comparisons. The analytical reference, FDTD workflow, and validation code are kept in separate modules.
 
-## Install and reproduce
+Known discrepancies are kept in the results rather than tuned away. Examples include
+the original short-run duration artifact, the under-resolved high-$Q$ TM lines in the
+coarse pitch sweep, and the larger residuals near grazing incidence in the slab
+validation.
+
+## Install and run
 
 ```bash
 # MEEP is not pip-installable; on Linux/macOS use conda-forge
@@ -93,52 +103,60 @@ conda create -n emrf -c conda-forge python=3.11 pymeep numpy scipy matplotlib py
 conda activate emrf
 pip install -e .
 
-pytest -m "not meep"      # unit tests and stored-result checks, no MEEP needed (seconds)
-pytest                    # everything incl. small MEEP integration tests (~4 min; MEEP tests auto-skip if MEEP is absent)
-pytest -m results         # checks on the stored result files only
+pytest -m "not meep"      # unit tests and stored-result checks, no MEEP needed
+pytest                    # includes small MEEP integration tests
+pytest -m results         # checks on stored result files only
 
-# Tier 1 (cylinder benchmark): ~30 min for resolutions 10-40 on 2 cores
+# Single-cylinder benchmark
 python experiments/convergence/run_resolution_ladder.py --resolutions 10 15 20 30 40 60
 python experiments/convergence/run_domain_studies.py
 python experiments/baseline/run_baseline.py
 python scripts/make_tier1_figures.py
 
-# Tier 2 (periodic array)
+# Periodic array
 python experiments/tier2/validate_slab.py
 python experiments/tier2/pitch_study.py
 python experiments/tier2/convergence_periodic.py
 python experiments/tier2/resonance_vs_pitch.py --harminv
 python experiments/tier2/highq_check.py
-python experiments/tier2/band_structure.py --pitch 3.0       # exploratory
+python experiments/tier2/band_structure.py --pitch 3.0
 python scripts/make_tier2_figures.py
 ```
 
-Tested with MEEP 1.34.0 (serial), Python 3.11, NumPy 2.4, SciPy 1.17, Matplotlib 3.10.
-Wall times quoted in `results/*/meta.json`.
+The saved results were generated with MEEP 1.34.0 (serial), Python 3.11,
+NumPy 2.4, SciPy 1.17, and Matplotlib 3.10. Wall times are recorded in
+`results/*/meta.json`.
 
 ## Repository layout
 
-```
-src/em_rf_lab/   analytical, config, geometry, metrics, convergence, io, sources, monitors, farfield,
-                 simulation, validation, plotting          (Tier 1)
-                 periodic, periodic_sources, resonance, modes, tier2_analysis   (Tier 2)
-experiments/     runnable studies (baseline, convergence, tier2)
-scripts/         figure generation
-tests/           unit (fast, no MEEP) and integration (MEEP; skipped if unavailable)
-docs/            theory, numerical method, periodic structures, verification & validation, results, roadmap
-results/         stored run data (small .npz/.json); figures/ - generated figures with captions
+```text
+src/em_rf_lab/   analytical, config, geometry, metrics, convergence, io, sources,
+                 monitors, farfield, simulation, validation, plotting
+                 periodic, periodic_sources, resonance, modes, tier2_analysis
+experiments/     runnable studies for the cylinder benchmark and periodic array
+scripts/         figure-generation scripts
+tests/           unit and MEEP integration tests
+docs/            theory, numerical method, periodic structures, verification,
+                 results, and future work
+results/         saved numerical runs
+figures/         generated figures and figure notes
 ```
 
-## Roadmap
+## Future work
 
-Statuses in [`docs/roadmap.md`](docs/roadmap.md). Radar-style signal processing (synthetic I/Q, matched filtering,
-range/Doppler, CFAR, array beamforming) is **PLANNED**; this repository currently contains none of it.
+Natural extensions are a more systematic study of the high-$Q$ TM branch, an independent
+RCWA or lattice-sum cross-check, larger-pitch comparison with the isolated-cylinder
+limit, two-dimensional or three-dimensional lattices, material loss and dispersion, and
+inverse-design calculations.
+
+A separate RF signal-processing extension—synthetic I/Q data, matched filtering,
+range/Doppler processing, CFAR, and array processing—is not implemented in this
+repository.
 
 ## Scope
 
-Simple canonical geometries and dimensionless units only. No real platform, system, or sensitive parameter is
-modelled.
+The repository uses canonical geometries and dimensionless parameters only. It does not model a real platform, operational system, or sensitive parameter set.
 
 ## License and citation
 
-MIT (see `LICENSE`). Citation metadata: `CITATION.cff`.
+MIT license; see `LICENSE`. Citation metadata are in `CITATION.cff`.
